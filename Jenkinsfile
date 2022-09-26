@@ -23,6 +23,7 @@ pipeline {
                     ./manage.py test'''
             }
         }
+        
         stage('install ansible prerequisites') {
             steps {
                 sh '''
@@ -36,34 +37,12 @@ pipeline {
                 '''
             }
         }
-        // stage('Prepare DB') {            
-        //     steps {
-        //         sshagent (credentials: ['ssh-app01-1']) {
-        //             sh '''
-        //                 pwd
-        //                 echo $WORKSPACE
-        //                 ansible-playbook -i ~/workspace/ansible-pipeline/hosts.yml -l database ~/workspace/ansible-pipeline/playbooks/postgres.yml
-        //                 '''
-        //     }
-        //     }
-        // }
-        stage('install docker to vm 1') {
-            steps{
-                sshagent (credentials: ['ssh-app01-1']) {
-                    sh '''
-                        ansible-playbook -i ~/workspace/ansible-pipeline/hosts.yml -l webserver ~/workspace/ansible-pipeline/playbooks/docker-install.yml
-                    '''
-                }
-
-            }
-
-        }
         
         stage('deploym to vm 1') {
             steps{
                 sshagent (credentials: ['ssh-app01-1']) {
                     sh '''
-                        ansible-playbook -i ~/workspace/ansible-pipeline/hosts.yml -l webserver ~/workspace/ansible-pipeline/playbooks/docker-build.yml
+                        ansible-playbook -i ~/workspace/ansible-pipeline/hosts.yml -l webserver ~/workspace/ansible-pipeline/playbooks/kubernetes-install.yaml
                     '''
                 }
 
